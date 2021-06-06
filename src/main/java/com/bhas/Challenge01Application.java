@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,10 +52,12 @@ public class Challenge01Application {
 	 * NOT_FOUND = 404
 	 * NOT_ACCEPTABLE = 406
 	 * */
-	ResponseEntity<ChallengeResponse>  home(@PathParam(value = "") String userName, @RequestHeader("Accept") String accept) {
+	ResponseEntity<ChallengeResponse>  home(@PathVariable String userName, @RequestHeader("Accept") String accept) {
 		ChallengeResponse response = new ChallengeResponse();
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println("Challenge01Application.home()"+accept);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		try {
 			if(!"application/xml".equalsIgnoreCase(accept)) {
 					UserResponse user = validUser(userName);
@@ -87,8 +90,6 @@ public class Challenge01Application {
 				response.setGitResponses(new ArrayList<GitResponse>() );
 				response.setStatus(406);
 				response.setMessage("Not Acceptable!");
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_JSON);
 				return new ResponseEntity<ChallengeResponse>(response, headers,HttpStatus.NOT_ACCEPTABLE);
 			}
 		}catch(RestClientResponseException e) {
